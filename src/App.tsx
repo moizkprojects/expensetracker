@@ -61,7 +61,6 @@ function App() {
   const expenses = useMemo(() => toStoredExpenses(rows), [rows]);
   const budget = useMemo(() => computeBudget(resolution.mieRate, expenses), [resolution.mieRate, expenses]);
   const remainingGood = budget.remaining >= 0;
-  const countyLabel = resolution.county || "standard rate area";
   const cityLabel = resolution.city || locationInput.split(",")[0] || "this city";
   const headerTitle = locationInput.trim() ? cityLabel : "Trip setup";
   const hasRate = resolution.mieRate > 0;
@@ -188,37 +187,25 @@ function App() {
 
   return (
     <main className="app">
+      {isStandardFallback ? (
+        <section className="tile fallback-tile">
+          <span>city/county were not found on the gsa site therefore a standard oconus rate is used for this location</span>
+        </section>
+      ) : null}
+
       <section className={`tile combined-tile ${topTileCollapsed ? "is-collapsed" : ""}`}>
         <div className="tile-header">
           <div>
-            <p className="tile-kicker">Trip setup + travel spend ledger</p>
+            <p className="tile-kicker">Travel Expense Tracker</p>
             <h1 className="title">{headerTitle}</h1>
           </div>
-          <button
-            className="toggle-button"
-            type="button"
-            aria-label={topTileCollapsed ? "Show trip tile" : "Hide trip tile"}
-            onClick={() => setTopTileCollapsed((value) => !value)}
-          >
-            {topTileCollapsed ? "Show this tile" : "Press this to hide this tile"}
-          </button>
         </div>
 
         <div className="collapsible-body">
           <div className="stack-section">
-            <h2 className="section-title">Trip setup</h2>
-            <div className={isStandardFallback ? "fallback-statement" : "rate-statement"}>
-              {isStandardFallback ? (
-                <>
-                  <span>city/county were not found on the gsa site therefore a standard oconus rate is used for this location</span>
-                  <strong>per diem of {hasRate ? toUsd(resolution.mieRate) : "$0.00"}</strong>
-                </>
-              ) : (
-                <>
-                  <span>*this city is in the county {countyLabel} which has a</span>
-                  <strong>per diem of {hasRate ? toUsd(resolution.mieRate) : "$0.00"}</strong>
-                </>
-              )}
+            <div className="rate-bubble">
+              <span>Per Diem Rate :</span>
+              <strong>{hasRate ? toUsd(resolution.mieRate) : "$0.00"}</strong>
             </div>
 
             <div className="field-group">
@@ -330,6 +317,15 @@ function App() {
             {saveStatus ? <p className="save-status">{saveStatus}</p> : null}
           </div>
         </div>
+
+        <button
+          className="toggle-button"
+          type="button"
+          aria-label={topTileCollapsed ? "Show tile" : "Hide tile"}
+          onClick={() => setTopTileCollapsed((value) => !value)}
+        >
+          {topTileCollapsed ? "toggle to show tile ^" : "toggle to hide tile ^"}
+        </button>
       </section>
 
       <section className="tile calculator-tile">

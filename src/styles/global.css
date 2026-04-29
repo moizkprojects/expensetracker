@@ -61,7 +61,7 @@ input {
 .tile-header {
   display: grid;
   gap: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .tile-header.compact {
@@ -100,6 +100,7 @@ input {
 .toggle-button {
   width: 100%;
   min-height: 40px;
+  margin-top: 14px;
   padding: 10px 12px;
   border-radius: 14px;
   color: var(--brand-dark);
@@ -110,42 +111,39 @@ input {
   overflow-wrap: anywhere;
 }
 
-.rate-statement {
-  display: grid;
-  gap: 4px;
-  margin: 4px 0 12px;
-  color: var(--muted);
-  font-size: 0.92rem;
-  line-height: 1.35;
-}
-
-.rate-statement strong {
-  display: block;
-  color: var(--brand-dark);
-  font-size: 1.75rem;
-  line-height: 1.05;
-  overflow-wrap: anywhere;
-}
-
-.fallback-statement {
-  display: grid;
-  gap: 8px;
-  margin: 4px 0 14px;
-  padding: 13px;
+.fallback-tile {
   border: 1px solid rgba(199, 70, 52, 0.28);
-  border-radius: 18px;
   color: var(--brand-dark);
-  background: rgba(199, 70, 52, 0.12);
-  font-size: 0.92rem;
-  font-weight: 720;
+  background: rgba(199, 70, 52, 0.14);
+  font-size: 0.95rem;
+  font-weight: 760;
   line-height: 1.35;
   overflow-wrap: anywhere;
 }
 
-.fallback-statement strong {
+.rate-bubble {
+  display: inline-grid;
+  grid-template-columns: 1fr;
+  gap: 3px;
+  width: 100%;
+  margin-bottom: 4px;
+  padding: 13px 14px;
+  border: 1px solid rgba(199, 70, 52, 0.2);
+  border-radius: 999px;
   color: var(--brand-dark);
+  background: rgba(199, 70, 52, 0.1);
+  overflow-wrap: anywhere;
+}
+
+.rate-bubble span {
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 740;
+}
+
+.rate-bubble strong {
   font-size: 1.55rem;
-  line-height: 1.05;
+  line-height: 1.1;
 }
 
 .collapsible-body {
@@ -164,6 +162,10 @@ input {
 
 .combined-tile.is-collapsed {
   padding-bottom: 14px;
+}
+
+.combined-tile.is-collapsed .toggle-button {
+  margin-top: 0;
 }
 
 .stack-section {
@@ -399,8 +401,7 @@ input {
     grid-template-columns: 1fr;
   }
 
-  .rate-statement strong,
-  .fallback-statement strong,
+  .rate-bubble strong,
   .balance strong {
     font-size: 1.65rem;
   }
