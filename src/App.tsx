@@ -4,6 +4,7 @@ import { searchOsmPlaces } from "./services/osmSearch";
 import { resolveRate } from "./services/rateResolver";
 import { RetentionService, SessionStore } from "./services/storage";
 import type {
+  DailySession,
   ExpenseRow as ExpenseRowType,
   OsmSuggestion,
   RateResolution,
@@ -38,6 +39,15 @@ const hydrateRows = (expenses: StoredExpense[]): ExpenseRowType[] => {
 };
 
 const dateFromInput = (dateKey: string) => new Date(`${dateKey || todayKey}T12:00:00`);
+const formatSavedDate = (dateKey: string) =>
+  dateFromInput(dateKey).toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+
+const savedExpenseTotal = (session: DailySession) =>
+  session.expenses.reduce((sum, item) => sum + item.amount, 0);
 
 function App() {
   const [initialSession] = useState(() => {
@@ -52,6 +62,8 @@ function App() {
   const [rows, setRows] = useState<ExpenseRowType[]>(hydrateRows(initialSession?.expenses ?? []));
   const [busy, setBusy] = useState(false);
   const [topTileCollapsed, setTopTileCollapsed] = useState(false);
+  const [historyCollapsed, setHistoryCollapsed] = useState(false);
+  const [savedSessions, setSavedSessions] = useState<DailySession[]>(() => SessionStore.list());
   const [saveStatus, setSaveStatus] = useState(initialSession ? "Saved for this date" : "");
   const [suggestions, setSuggestions] = useState<OsmSuggestion[]>([]);
   const [suggestionsBusy, setSuggestionsBusy] = useState(false);
@@ -171,6 +183,7 @@ function App() {
       resolution,
       expenses,
     });
+    setSavedSessions(SessionStore.list());
     setSaveStatus("Saved for this date");
   };
 
@@ -285,7 +298,7 @@ function App() {
             </div>
 
             <button className="btn btn-primary" onClick={onResolve} type="button" disabled={busy}>
-              {busy ? "Finding rate..." : "Find rate"}
+              {busy ? "Finding Rate..." : "Find Rate"}
             </button>
             {resolution.message ? <p className="status">{resolution.message}</p> : null}
           </div>
@@ -297,7 +310,7 @@ function App() {
           aria-label={topTileCollapsed ? "Show tile" : "Hide tile"}
           onClick={() => setTopTileCollapsed((value) => !value)}
         >
-          {topTileCollapsed ? "toggle to show tile ^" : "toggle to hide tile ^"}
+          {topTileCollapsed ? "Toggle To Show Tile ^" : "Toggle To Hide Tile ^"}
         </button>
       </section>
 
@@ -313,7 +326,7 @@ function App() {
           />
         ))}
         <button className="btn btn-secondary" type="button" onClick={onAddAnother}>
-          Add more expenses
+          Add More Expenses
         </button>
         <button className="save-button" type="button" onClick={onSave}>
           Save
@@ -337,6 +350,46 @@ function App() {
           <span>{remainingGood ? "Amount left" : "Amount over"}</span>
           <strong>{toUsd(Math.abs(budget.remaining))}</strong>
         </div>
+      </section>
+
+      <section className={`tile history-tile ${historyCollapsed ? "is-collapsed" : ""}`}>
+        <h2 className="section-title">Saved Entries</h2>
+        <div className="history-body">
+          {savedSessions.length ? (
+            <div className="history-list">
+              {savedSessions.map((session) => (
+                <article className="history-entry" key={session.dateKey}>
+                  <strong>{formatSavedDate(session.dateKey)}</strong>
+                  <span>{session.locationInput || "No location saved"}</span>
+                  <span>Per diem: {toUsd(session.resolution.mieRate || 0)}</span>
+                  <span>Total expenses: {toUsd(savedExpenseTotal(session))}</span>
+                  {session.expenses.length ? (
+                    <ul className="history-expenses">
+                      {session.expenses.map((expense, index) => (
+                        <li key={`${session.dateKey}-${expense.name}-${index}`}>
+                          <span>{expense.name || "Unnamed expense"}</span>
+                          <strong>{toUsd(expense.amount)}</strong>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="history-empty">No expenses saved for this day.</p>
+                  )}
+                </article>
+              ))}
+            </div>
+          ) : (
+            <p className="history-empty">Saved entries will appear here after you tap Save.</p>
+          )}
+        </div>
+        <button
+          className="toggle-button"
+          type="button"
+          aria-label={historyCollapsed ? "Show saved entries" : "Hide saved entries"}
+          onClick={() => setHistoryCollapsed((value) => !value)}
+        >
+          {historyCollapsed ? "Toggle To Show Saved Entries ^" : "Toggle To Hide Saved Entries ^"}
+        </button>
       </section>
     </main>
   );

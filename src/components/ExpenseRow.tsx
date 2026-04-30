@@ -24,8 +24,8 @@ export function ExpenseRow({ row, removable, onChange, onRemove }: Props) {
         onChange={(e) => onChange({ ...row, amount: e.target.value })}
       />
       {removable ? (
-        <button className="remove-btn" onClick={onRemove} type="button" aria-label="Remove expense">
-          x
+        <button className="remove-btn" onClick={onRemove} type="button" aria-label="Remove Expense">
+          X
         </button>
       ) : null}
     </div>

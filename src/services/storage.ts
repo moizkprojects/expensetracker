@@ -45,6 +45,11 @@ export const SessionStore = {
     return store.sessions.find((item) => item.dateKey === dateKey) ?? null;
   },
 
+  list(): DailySession[] {
+    const store = parseStore();
+    return [...store.sessions].sort((a, b) => b.dateKey.localeCompare(a.dateKey));
+  },
+
   save(session: Omit<DailySession, "createdAt"> & { createdAt?: string }) {
     const store = parseStore();
     const createdAt = session.createdAt ?? nowIso();
