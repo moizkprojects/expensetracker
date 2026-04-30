@@ -421,6 +421,23 @@ input {
     0 2px 0 rgba(255, 255, 255, 0.7) inset;
   text-align: center;
   overflow-wrap: anywhere;
+  cursor: pointer;
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.history-entry:hover,
+.history-entry:focus {
+  border-color: rgba(199, 70, 52, 0.36);
+  box-shadow:
+    0 16px 32px rgba(88, 50, 43, 0.12),
+    0 2px 0 rgba(255, 255, 255, 0.7) inset;
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.history-entry.is-selected {
+  border-color: rgba(199, 70, 52, 0.46);
+  background: rgba(255, 244, 242, 0.92);
 }
 
 .history-entry > strong {
@@ -431,6 +448,18 @@ input {
 .history-entry > span {
   color: var(--muted);
   font-size: 0.9rem;
+}
+
+.history-open-label {
+  display: inline-block;
+  justify-self: center;
+  margin-top: 4px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  color: var(--brand-dark) !important;
+  background: var(--brand-soft);
+  font-size: 0.78rem !important;
+  font-weight: 780;
 }
 
 .history-expenses {

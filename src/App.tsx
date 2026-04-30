@@ -135,6 +135,18 @@ function App() {
     setSaveStatus("Saved for this date");
   };
 
+  const openSavedSession = (session: DailySession) => {
+    setDateInput(session.dateKey);
+    setLocationInput(session.locationInput);
+    setStateInput(session.stateInput ?? "");
+    setResolution(session.resolution);
+    setTravelDay(session.travelDay ?? false);
+    setRows(hydrateRows(session.expenses));
+    setSaveStatus("Loaded saved entry");
+    setTopTileCollapsed(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const markUnsaved = () => {
     setSaveStatus("Unsaved changes");
   };
@@ -391,11 +403,24 @@ function App() {
           {savedSessions.length ? (
             <div className="history-list">
               {savedSessions.map((session) => (
-                <article className="history-entry" key={session.dateKey}>
+                <article
+                  className={session.dateKey === dateInput ? "history-entry is-selected" : "history-entry"}
+                  key={session.dateKey}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => openSavedSession(session)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      openSavedSession(session);
+                    }
+                  }}
+                >
                   <strong>{formatSavedDate(session.dateKey)}</strong>
                   <span>{session.locationInput || "No location saved"}</span>
                   <span>{session.travelDay ? "Travel day per diem" : "Per diem"}: {toUsd(effectivePerDiem(session.resolution.mieRate || 0, session.travelDay))}</span>
                   <span>Total expenses: {toUsd(savedExpenseTotal(session))}</span>
+                  <span className="history-open-label">Tap To Edit Entry</span>
                   {session.expenses.length ? (
                     <ul className="history-expenses">
                       {session.expenses.map((expense, index) => (
