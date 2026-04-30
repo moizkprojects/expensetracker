@@ -34,6 +34,7 @@ export type DailySession = {
   createdAt: string;
   locationInput: string;
   stateInput?: string;
+  travelDay?: boolean;
   resolution: RateResolution;
   expenses: StoredExpense[];
 };

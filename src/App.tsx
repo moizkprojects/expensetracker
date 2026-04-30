@@ -48,6 +48,8 @@ const formatSavedDate = (dateKey: string) =>
 
 const savedExpenseTotal = (session: DailySession) =>
   session.expenses.reduce((sum, item) => sum + item.amount, 0);
+const effectivePerDiem = (rate: number, travelDay?: boolean) =>
+  Number((travelDay ? rate * 0.75 : rate).toFixed(2));
 
 function App() {
   const [initialSession] = useState(() => {
@@ -59,6 +61,7 @@ function App() {
   const [locationInput, setLocationInput] = useState(initialSession?.locationInput ?? "");
   const [stateInput, setStateInput] = useState(initialSession?.stateInput ?? "");
   const [resolution, setResolution] = useState<RateResolution>(initialSession?.resolution ?? defaultResolution);
+  const [travelDay, setTravelDay] = useState(initialSession?.travelDay ?? false);
   const [rows, setRows] = useState<ExpenseRowType[]>(hydrateRows(initialSession?.expenses ?? []));
   const [busy, setBusy] = useState(false);
   const [topTileCollapsed, setTopTileCollapsed] = useState(false);
@@ -71,9 +74,10 @@ function App() {
   const cacheRef = useRef<Map<string, OsmSuggestion[]>>(new Map());
 
   const expenses = useMemo(() => toStoredExpenses(rows), [rows]);
-  const budget = useMemo(() => computeBudget(resolution.mieRate, expenses), [resolution.mieRate, expenses]);
+  const activePerDiem = useMemo(() => effectivePerDiem(resolution.mieRate, travelDay), [resolution.mieRate, travelDay]);
+  const budget = useMemo(() => computeBudget(activePerDiem, expenses), [activePerDiem, expenses]);
   const remainingGood = budget.remaining >= 0;
-  const hasRate = resolution.mieRate > 0;
+  const hasRate = activePerDiem > 0;
   const isStandardFallback = resolution.matchType === "standard_oconus";
 
   useEffect(() => {
@@ -117,6 +121,7 @@ function App() {
     const saved = SessionStore.getByDateKey(dateKey);
     if (!saved) {
       setResolution(defaultResolution);
+      setTravelDay(false);
       setRows([{ id: randomId(), name: "", amount: "" }]);
       setSaveStatus("");
       return;
@@ -125,6 +130,7 @@ function App() {
     setLocationInput(saved.locationInput);
     setStateInput(saved.stateInput ?? "");
     setResolution(saved.resolution);
+    setTravelDay(saved.travelDay ?? false);
     setRows(hydrateRows(saved.expenses));
     setSaveStatus("Saved for this date");
   };
@@ -180,6 +186,7 @@ function App() {
       dateKey: dateInput || todayKey,
       locationInput,
       stateInput,
+      travelDay,
       resolution,
       expenses,
     });
@@ -212,8 +219,8 @@ function App() {
         <div className="collapsible-body">
           <div className="stack-section">
             <div className="rate-bubble">
-              <span>Per Diem Rate :</span>
-              <strong>{hasRate ? toUsd(resolution.mieRate) : "$0.00"}</strong>
+              <span>{travelDay ? "Travel Day Per Diem" : "Per Diem Rate :"}</span>
+              <strong>{hasRate ? toUsd(activePerDiem) : "$0.00"}</strong>
             </div>
 
             <div className="field-group">
@@ -297,6 +304,32 @@ function App() {
               />
             </div>
 
+            <div className="field-group">
+              <span className="label">Travel Day?</span>
+              <div className="travel-toggle" role="group" aria-label="Travel Day">
+                <button
+                  className={!travelDay ? "travel-option is-active" : "travel-option"}
+                  type="button"
+                  onClick={() => {
+                    setTravelDay(false);
+                    markUnsaved();
+                  }}
+                >
+                  No
+                </button>
+                <button
+                  className={travelDay ? "travel-option is-active" : "travel-option"}
+                  type="button"
+                  onClick={() => {
+                    setTravelDay(true);
+                    markUnsaved();
+                  }}
+                >
+                  Yes
+                </button>
+              </div>
+            </div>
+
             <button className="btn btn-primary" onClick={onResolve} type="button" disabled={busy}>
               {busy ? "Finding Rate..." : "Find Rate"}
             </button>
@@ -338,8 +371,8 @@ function App() {
         <p className="tile-kicker">Live calculator</p>
         <div className="calculator-grid">
           <div>
-            <span className="stat-label">Per diem</span>
-            <strong className="stat-value">{toUsd(resolution.mieRate || 0)}</strong>
+            <span className="stat-label">{travelDay ? "Travel day per diem" : "Per diem"}</span>
+            <strong className="stat-value">{toUsd(activePerDiem || 0)}</strong>
           </div>
           <div>
             <span className="stat-label">Spent</span>
@@ -361,7 +394,7 @@ function App() {
                 <article className="history-entry" key={session.dateKey}>
                   <strong>{formatSavedDate(session.dateKey)}</strong>
                   <span>{session.locationInput || "No location saved"}</span>
-                  <span>Per diem: {toUsd(session.resolution.mieRate || 0)}</span>
+                  <span>{session.travelDay ? "Travel day per diem" : "Per diem"}: {toUsd(effectivePerDiem(session.resolution.mieRate || 0, session.travelDay))}</span>
                   <span>Total expenses: {toUsd(savedExpenseTotal(session))}</span>
                   {session.expenses.length ? (
                     <ul className="history-expenses">

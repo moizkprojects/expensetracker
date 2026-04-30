@@ -102,7 +102,8 @@ input {
 .toggle-button,
 .save-button,
 .btn,
-.remove-btn {
+.remove-btn,
+.travel-option {
   border: 0;
   cursor: pointer;
 }
@@ -235,6 +236,33 @@ input {
 .input:focus {
   border-color: rgba(199, 70, 52, 0.48);
   box-shadow: 0 0 0 4px rgba(199, 70, 52, 0.1);
+}
+
+.travel-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(245, 244, 243, 0.92);
+  box-shadow: 0 2px 0 rgba(255, 255, 255, 0.72) inset;
+}
+
+.travel-option {
+  min-height: 38px;
+  border-radius: 14px;
+  color: var(--muted);
+  background: transparent;
+  font-weight: 780;
+  text-align: center;
+  transition: background 160ms ease, color 160ms ease, box-shadow 160ms ease;
+}
+
+.travel-option.is-active {
+  color: #fff;
+  background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+  box-shadow: 0 8px 18px rgba(199, 70, 52, 0.22);
 }
 
 .suggestions {
