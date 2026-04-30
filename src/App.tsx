@@ -61,8 +61,6 @@ function App() {
   const expenses = useMemo(() => toStoredExpenses(rows), [rows]);
   const budget = useMemo(() => computeBudget(resolution.mieRate, expenses), [resolution.mieRate, expenses]);
   const remainingGood = budget.remaining >= 0;
-  const cityLabel = resolution.city || locationInput.split(",")[0] || "this city";
-  const headerTitle = locationInput.trim() ? cityLabel : "Trip setup";
   const hasRate = resolution.mieRate > 0;
   const isStandardFallback = resolution.matchType === "standard_oconus";
 
@@ -195,10 +193,7 @@ function App() {
 
       <section className={`tile combined-tile ${topTileCollapsed ? "is-collapsed" : ""}`}>
         <div className="tile-header">
-          <div>
-            <p className="tile-kicker">Travel Expense Tracker</p>
-            <h1 className="title">{headerTitle}</h1>
-          </div>
+          <h1 className="title app-title">Travel Expense Tracker</h1>
         </div>
 
         <div className="collapsible-body">
@@ -294,28 +289,6 @@ function App() {
             </button>
             {resolution.message ? <p className="status">{resolution.message}</p> : null}
           </div>
-
-          <div className="stack-section ledger-section">
-            <div className="ledger-header">
-              <h2 className="section-title">Travel spend ledger</h2>
-              <button className="save-button" type="button" onClick={onSave}>
-                Save
-              </button>
-            </div>
-            {rows.map((row) => (
-              <ExpenseRow
-                key={row.id}
-                row={row}
-                removable={!isEmptyRow(row)}
-                onChange={(next) => onChangeRow(row.id, next)}
-                onRemove={() => onRemoveRow(row.id)}
-              />
-            ))}
-            <button className="btn btn-secondary" type="button" onClick={onAddAnother}>
-              Add more expenses
-            </button>
-            {saveStatus ? <p className="save-status">{saveStatus}</p> : null}
-          </div>
         </div>
 
         <button
@@ -326,6 +299,26 @@ function App() {
         >
           {topTileCollapsed ? "toggle to show tile ^" : "toggle to hide tile ^"}
         </button>
+      </section>
+
+      <section className="tile expense-tile">
+        <h2 className="section-title">Enter Expenses Below</h2>
+        {rows.map((row) => (
+          <ExpenseRow
+            key={row.id}
+            row={row}
+            removable={!isEmptyRow(row)}
+            onChange={(next) => onChangeRow(row.id, next)}
+            onRemove={() => onRemoveRow(row.id)}
+          />
+        ))}
+        <button className="btn btn-secondary" type="button" onClick={onAddAnother}>
+          Add more expenses
+        </button>
+        <button className="save-button" type="button" onClick={onSave}>
+          Save
+        </button>
+        {saveStatus ? <p className="save-status">{saveStatus}</p> : null}
       </section>
 
       <section className="tile calculator-tile">

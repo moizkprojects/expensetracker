@@ -47,21 +47,26 @@ input {
 
 .tile {
   width: 100%;
-  margin-bottom: 12px;
-  padding: 17px;
+  margin-bottom: 14px;
+  padding: 18px;
   border: 1px solid var(--line);
-  border-radius: 22px;
+  border-radius: 30px;
   background: var(--surface);
-  box-shadow: var(--shadow);
+  box-shadow:
+    0 22px 52px rgba(88, 50, 43, 0.16),
+    0 3px 0 rgba(255, 255, 255, 0.72) inset,
+    0 -2px 0 rgba(80, 45, 40, 0.04) inset;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   animation: fade-up 220ms ease both;
+  text-align: center;
 }
 
 .tile-header {
   display: grid;
   gap: 12px;
   margin-bottom: 14px;
+  justify-items: center;
 }
 
 .tile-header.compact {
@@ -83,6 +88,11 @@ input {
   font-weight: 760;
   letter-spacing: 0;
   overflow-wrap: anywhere;
+}
+
+.app-title {
+  font-size: 2.25rem;
+  line-height: 1.02;
 }
 
 .section-title {
@@ -128,11 +138,13 @@ input {
   width: 100%;
   margin-bottom: 4px;
   padding: 13px 14px;
-  border: 1px solid rgba(199, 70, 52, 0.2);
+  border: 1px solid rgba(110, 103, 101, 0.18);
   border-radius: 999px;
-  color: var(--brand-dark);
-  background: rgba(199, 70, 52, 0.1);
+  color: var(--ink);
+  background: rgba(245, 244, 243, 0.92);
   overflow-wrap: anywhere;
+  justify-items: center;
+  text-align: center;
 }
 
 .rate-bubble span {
@@ -144,6 +156,7 @@ input {
 .rate-bubble strong {
   font-size: 1.55rem;
   line-height: 1.1;
+  text-align: center;
 }
 
 .collapsible-body {
@@ -171,22 +184,14 @@ input {
 .stack-section {
   display: grid;
   gap: 10px;
-}
-
-.ledger-section {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-}
-
-.ledger-header {
-  display: grid;
-  gap: 10px;
+  justify-items: stretch;
+  text-align: center;
 }
 
 .field-group {
   position: relative;
   margin-bottom: 10px;
+  text-align: center;
 }
 
 .label {
@@ -207,6 +212,7 @@ input {
   color: var(--ink);
   background: var(--surface-strong);
   transition: border-color 140ms ease, box-shadow 140ms ease;
+  text-align: center;
 }
 
 .input:focus {
@@ -243,7 +249,7 @@ input {
   border: 0;
   border-top: 1px solid rgba(123, 90, 84, 0.14);
   background: #fff;
-  text-align: left;
+  text-align: center;
 }
 
 .suggestion-item:hover {
@@ -300,6 +306,7 @@ input {
 .save-button {
   width: 100%;
   min-height: 40px;
+  margin-top: 8px;
   border-radius: 14px;
   color: #fff;
   background: var(--brand-dark);
@@ -313,6 +320,7 @@ input {
   gap: 8px;
   align-items: stretch;
   margin-bottom: 8px;
+  text-align: center;
 }
 
 .expense-row .amount-input {
@@ -322,7 +330,7 @@ input {
 .remove-btn {
   width: 40px;
   height: 34px;
-  justify-self: end;
+  justify-self: center;
   border-radius: 12px;
   color: var(--bad);
   background: rgba(191, 47, 47, 0.11);
@@ -332,6 +340,11 @@ input {
 
 .calculator-tile {
   margin-bottom: 0;
+}
+
+.expense-tile {
+  display: grid;
+  gap: 10px;
 }
 
 .calculator-grid {
