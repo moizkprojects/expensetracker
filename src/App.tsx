@@ -254,9 +254,9 @@ function App() {
               />
               {showSuggestions ? (
                 <div className="suggestions">
-                  {suggestionsBusy ? <div className="suggestion-muted">Searching OpenStreetMap...</div> : null}
+                  {suggestionsBusy ? <div className="suggestion-muted">Searching city suggestions...</div> : null}
                   {!suggestionsBusy && suggestions.length === 0 && locationInput.trim().length >= 3 ? (
-                    <div className="suggestion-muted">No OpenStreetMap suggestions yet.</div>
+                    <div className="suggestion-muted">No city suggestions yet.</div>
                   ) : null}
                   {suggestions.map((item) => (
                     <button
